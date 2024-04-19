@@ -19,12 +19,55 @@ void assertString(const char *expected, char *got, char const *fileName, char co
         fprintf(stderr, "%s - OK\n", funcName);
 }
 
+void removeExtraSpaces(char *s) {
+    if (s == NULL || *s == '\0') {
+        return;
+    }
+
+    char* inputPtr = s;
+    char* outputPtr = s;
+
+    while (isspace(*inputPtr)) {
+        inputPtr++;
+    }
+
+    while (*inputPtr != '\0' && !isspace(*inputPtr)) {
+        *outputPtr = *inputPtr;
+        inputPtr++;
+        outputPtr++;
+    }
+
+    while (*inputPtr != '\0') {
+        if (isspace(*inputPtr)) {
+            while (isspace(*(inputPtr + 1))) {
+                inputPtr++;
+            }
+            *outputPtr = ' ';
+            outputPtr++;
+        } else {
+            *outputPtr = *inputPtr;
+            outputPtr++;
+        }
+        inputPtr++;
+    }
+    *outputPtr = '\0';
+}
+
 void test_removeNonLetters() {
     char s[] = "Hi 12  3  ";
     removeNonLetters(s);
     ASSERT_STRING("Hi123", s);
 }
 
+void test_removeExtraSpaces() {
+    char s[] = "    Hi     World";
+    removeExtraSpaces(s);
+
+    ASSERT_STRING("Hi World", s);
+
+}
+
 int main() {
     test_removeNonLetters();
+    test_removeExtraSpaces();
 }
