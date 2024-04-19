@@ -5,6 +5,10 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#define MAX_STRING_SIZE 100
+#define MAX_N_WORDS_IN_STRING 100
+#define MAX_WORD_SIZE 20
+
 size_t strlen_(const char *begin) {
     char *end = begin;
     while (*end != '\0')
