@@ -1,4 +1,6 @@
 #include "string_.h"
+#include <assert.h>
+
 #define ASSERT_STRING(expected, got) assertString(expected, got, \
 __FILE__, __FUNCTION__, __LINE__)
 
@@ -148,6 +150,71 @@ void replace(char *source, char *w1, char *w2) {
     }
 }
 
+int areWordsEqual(WordDescriptor w1, WordDescriptor w2) {
+    char *ptr1 = w1.begin;
+    char *ptr2 = w2.begin;
+
+    while (ptr1 != w1.end && ptr2 != w2.end) {
+        if (*ptr1 != *ptr2) {
+            return 0;
+        }
+        ptr1++;
+        ptr2++;
+    }
+
+    return ptr1 == w1.end && ptr2 == w2.end;
+}
+
+int areWordsLexicographicallyOrdered(char *sentence) {
+    WordDescriptor words[MAX_WORD_SIZE];
+    int wordCount = 0;
+
+    char *ptr = sentence;
+    while (*ptr != '\0') {
+        while (*ptr != '\0' && *ptr == ' ') {
+            ptr++;
+        }
+        if (*ptr == '\0') {
+            break;
+        }
+        words[wordCount].begin = ptr;
+
+        while (*ptr != '\0' && *ptr != ' ') {
+            ptr++;
+        }
+
+        words[wordCount].end = ptr;
+        wordCount++;
+
+        while (*ptr != '\0' && *ptr == ' ') {
+            ptr++;
+        }
+    }
+
+    for (int i = 1; i < wordCount; i++) {
+        char *ptr1 = words[i - 1].begin;
+        char *ptr2 = words[i].begin;
+
+        while (ptr1 != words[i - 1].end && ptr2 != words[i].end) {
+            if (*ptr1 != *ptr2) {
+                if (*ptr1 < *ptr2) {
+                    break;
+                } else {
+                    return 0;
+                }
+            }
+            ptr1++;
+            ptr2++;
+        }
+
+        if (ptr1 == words[i - 1].end && ptr2 != words[i].end) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
 void test_removeNonLetters() {
     char s[] = "Hi 12  3  ";
     removeNonLetters(s);
@@ -178,9 +245,19 @@ void test_replace() {
     ASSERT_STRING("hi world", s);
 }
 
+void test_areWordsLexicographicallyOrdered() {
+    char s1[] = "apple banana cherry";
+    char s2[] = "test false apple";
+
+    assert(areWordsLexicographicallyOrdered(s1) == 1 && areWordsLexicographicallyOrdered(s2) == 0);
+}
+
 int main() {
     test_removeNonLetters();
     test_removeExtraSpaces();
     test_replaceDigitsWithSpaces();
     test_replace();
+    test_areWordsLexicographicallyOrdered();
+
+    return 0;
 }
