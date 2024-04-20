@@ -4,10 +4,18 @@
 #define ASSERT_STRING(expected, got) assertString(expected, got, \
 __FILE__, __FUNCTION__, __LINE__)
 
-typedef struct WordDescriptor{
+typedef struct WordDescriptor {
     char *begin;
     char *end;
 } WordDescriptor;
+
+typedef struct BagOfWords {
+    WordDescriptor words[MAX_N_WORDS_IN_STRING];
+    size_t size;
+} BagOfWords;
+
+BagOfWords _bag;
+BagOfWords _bag2;
 
 char _stringBuffer[MAX_STRING_SIZE]; // Буфер для временного хранения строки
 
@@ -41,8 +49,8 @@ void removeExtraSpaces(char *s) {
         return;
     }
 
-    char* inputPtr = s;
-    char* outputPtr = s;
+    char *inputPtr = s;
+    char *outputPtr = s;
 
     while (isspace(*inputPtr)) {
         inputPtr++;
@@ -213,6 +221,48 @@ int areWordsLexicographicallyOrdered(char *sentence) {
     }
 
     return 1;
+}
+
+void getBagOfWords(BagOfWords *bag, char *s) {
+    bag->size = 0;
+
+    char *ptr = s;
+    while (*ptr != '\0') {
+        while (*ptr != '\0' && *ptr == ' ') {
+            ptr++;
+        }
+        if (*ptr == '\0') {
+            break;
+        }
+
+        bag->words[bag->size].begin = ptr;
+
+        while (*ptr != '\0' && *ptr != ' ') {
+            ptr++;
+        }
+
+        bag->words[bag->size].end = ptr;
+        bag->size++;
+
+        while (*ptr != '\0' && *ptr == ' ') {
+            ptr++;
+        }
+    }
+}
+
+void printReverseBagOfWords(char *s) {
+    BagOfWords bag;
+
+    getBagOfWords(&bag, s);
+
+    for (int i = bag.size - 1; i >= 0; i--) {
+        char *ptr = bag.words[i].begin;
+        while (ptr != bag.words[i].end) {
+            printf("%c", *ptr);
+            ptr++;
+        }
+        printf("\n");
+    }
 }
 
 void test_removeNonLetters() {
