@@ -586,6 +586,26 @@ void completeString(char *str1, char *str2) {
     }
 }
 
+bool containsWordInString(const char *word, const char *str) {
+    if (word == NULL || str == NULL) {
+        return false;
+    }
+
+    const char *wordPtr = word;
+    const char *strPtr = str;
+
+    while (*strPtr != '\0') {
+        if (*strPtr == *wordPtr) {
+            wordPtr++;
+            if (*wordPtr == '\0') {
+                return true;
+            }
+        }
+        strPtr++;
+    }
+
+    return false;
+}
 
 void test_removeNonLetters() {
     char s[] = "Hi 12  3  ";
@@ -726,6 +746,15 @@ void test_completeString() {
     ASSERT_STRING("hello world world", str1);
 }
 
+void test_containsWordInString() {
+    const char *word = "hello";
+    const char *str = "worldhello";
+    const char *str2 = "world";
+
+    assert(containsWordInString(word, str) == 1);
+    assert(containsWordInString(word, str2) == 0);
+}
+
 int main() {
     test_removeNonLetters();
     test_removeExtraSpaces();
@@ -742,6 +771,7 @@ int main() {
     test_getWordBeforeFirstWordInBothStrings();
     test_removePalindrome();
     test_completeString();
+    test_containsWordInString();
 
     return 0;
 }
