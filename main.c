@@ -563,6 +563,30 @@ void removePalindromes(char *s) {
     removeExtraSpaces(s);
 }
 
+void completeString(char *str1, char *str2) {
+    BagOfWords bag1, bag2;
+    getBagOfWords(&bag1, str1);
+    getBagOfWords(&bag2, str2);
+
+    if (bag1.size < bag2.size) {
+        char *ptr1 = str1 + strlen_(str1);
+        for (int i = bag1.size; i < bag2.size; i++) {
+            if (ptr1 != str1) {
+                *ptr1++ = ' ';
+            }
+
+            WordDescriptor word = bag2.words[i];
+            char *wordPtr = word.begin;
+            while (wordPtr != word.end) {
+                *ptr1++ = *wordPtr++;
+            }
+        }
+
+        *ptr1 = '\0';
+    }
+}
+
+
 void test_removeNonLetters() {
     char s[] = "Hi 12  3  ";
     removeNonLetters(s);
@@ -694,6 +718,14 @@ void test_removePalindrome() {
     ASSERT_STRING("hello world", s);
 }
 
+void test_completeString() {
+    char str1[] = "hello world";
+    char str2[] = "hello new world";
+    completeString(str1, str2);
+
+    ASSERT_STRING("hello world world", str1);
+}
+
 int main() {
     test_removeNonLetters();
     test_removeExtraSpaces();
@@ -709,6 +741,7 @@ int main() {
     test_getWordsExceptLast();
     test_getWordBeforeFirstWordInBothStrings();
     test_removePalindrome();
+    test_completeString();
 
     return 0;
 }
