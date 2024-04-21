@@ -488,6 +488,33 @@ bool hasPairOfWordsWithSameLetters(char *s) {
     return false;
 }
 
+char* getWordsExceptLast(char *s) {
+    BagOfWords bag;
+    getBagOfWords(&bag, s);
+
+    if (bag.size <= 1) {
+        char *result = malloc(1);
+        result[0] = '\0';
+        return result;
+    }
+    size_t totalLength = 0;
+
+    for (int i = 0; i < bag.size - 1; i++) {
+        totalLength += strlen_(bag.words[i].begin) + 1;
+    }
+
+    char *result = malloc(totalLength + 1);
+
+    char *ptr = result;
+    for (int i = 0; i < bag.size - 1; i++) {
+        ptr = copy(bag.words[i].begin, bag.words[i].end, ptr);
+        *ptr++ = ' ';
+    }
+    *--ptr = '\0';
+
+    return result;
+}
+
 void test_removeNonLetters() {
     char s[] = "Hi 12  3  ";
     removeNonLetters(s);
@@ -594,6 +621,17 @@ void test_hasPairOfWordsWithSameLetters() {
     assert(hasPairOfWordsWithSameLetters(s4) == true);
 }
 
+void test_getWordsExceptLast() {
+    char s1[] = "apple banana cherry";
+    char s2[] = "one";
+    char s3[] = "";
+
+    ASSERT_STRING("apple banana", getWordsExceptLast(s1));
+    ASSERT_STRING("", getWordsExceptLast(s2));
+    ASSERT_STRING("", getWordsExceptLast(s3));
+
+}
+
 int main() {
     test_removeNonLetters();
     test_removeExtraSpaces();
@@ -606,6 +644,7 @@ int main() {
     test_lastWordInFirstStringInSecondString();
     test_hasDuplicateWords();
     test_hasPairOfWordsWithSameLetters();
+    test_getWordsExceptLast();
 
     return 0;
 }
