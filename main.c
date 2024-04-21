@@ -17,7 +17,7 @@ typedef struct BagOfWords {
 BagOfWords _bag;
 BagOfWords _bag2;
 
-char _stringBuffer[MAX_STRING_SIZE]; // Буфер для временного хранения строки
+char _stringBuffer[MAX_STRING_SIZE];
 
 void copyToBuffer(const char *source) {
     copy(source, getEndOfString(source), _stringBuffer);
@@ -303,50 +303,6 @@ int getCountOfPalindrome(char *s) {
     return count;
 }
 
-void test_removeNonLetters() {
-    char s[] = "Hi 12  3  ";
-    removeNonLetters(s);
-    ASSERT_STRING("Hi123", s);
-}
-
-void test_removeExtraSpaces() {
-    char s[] = "    Hi     World";
-    removeExtraSpaces(s);
-
-    ASSERT_STRING("Hi World", s);
-
-}
-
-void test_replaceDigitsWithSpaces() {
-    char s[] = "H2e3llo1Wor1ld";
-    replaceDigitsWithSpaces(s);
-
-    ASSERT_STRING("H  e   llo Wor ld", s);
-}
-
-void test_replace() {
-    char s[] = "hello world";
-    char w1[] = "hello";
-    char w2[] = "hi";
-    replace(s, w1, w2);
-
-    ASSERT_STRING("hi world", s);
-}
-
-void test_areWordsLexicographicallyOrdered() {
-    char s1[] = "apple banana cherry";
-    char s2[] = "test false apple";
-
-    assert(areWordsLexicographicallyOrdered(s1) == 1 && areWordsLexicographicallyOrdered(s2) == 0);
-}
-
-void test_getCountOfPalindrome() {
-    char s1[] = "radar level apple skin";
-    char s2[] = "test false apple skin";
-    char s3[] = "radar level lol anna";
-
-    assert(getCountOfPalindrome(s1) == 2 && getCountOfPalindrome(s2) == 0 && getCountOfPalindrome(s3) == 4);
-}
 
 int getWord(char **ptr, WordDescriptor *word) {
     char *begin = *ptr;
@@ -404,6 +360,68 @@ void interleaveStrings(char *s1, char *s2, char *result) {
 
     *resultPtr = '\0';
 }
+
+void reverseWords(char *s) {
+    BagOfWords bag;
+
+    getBagOfWords(&bag, s);
+
+    for (int i = bag.size - 1; i >= 0; i--) {
+        char *ptr = bag.words[i].begin;
+        while (ptr != bag.words[i].end) {
+            printf("%c", *ptr);
+            ptr++;
+        }
+        printf(" ");
+    }
+}
+
+
+void test_removeNonLetters() {
+    char s[] = "Hi 12  3  ";
+    removeNonLetters(s);
+    ASSERT_STRING("Hi123", s);
+}
+
+void test_removeExtraSpaces() {
+    char s[] = "    Hi     World";
+    removeExtraSpaces(s);
+
+    ASSERT_STRING("Hi World", s);
+
+}
+
+void test_replaceDigitsWithSpaces() {
+    char s[] = "H2e3llo1Wor1ld";
+    replaceDigitsWithSpaces(s);
+
+    ASSERT_STRING("H  e   llo Wor ld", s);
+}
+
+void test_replace() {
+    char s[] = "hello world";
+    char w1[] = "hello";
+    char w2[] = "hi";
+    replace(s, w1, w2);
+
+    ASSERT_STRING("hi world", s);
+}
+
+void test_areWordsLexicographicallyOrdered() {
+    char s1[] = "apple banana cherry";
+    char s2[] = "test false apple";
+
+    assert(areWordsLexicographicallyOrdered(s1) == 1 && areWordsLexicographicallyOrdered(s2) == 0);
+}
+
+void test_getCountOfPalindrome() {
+    char s1[] = "radar level apple skin";
+    char s2[] = "test false apple skin";
+    char s3[] = "radar level lol anna";
+
+    assert(getCountOfPalindrome(s1) == 2 && getCountOfPalindrome(s2) == 0 && getCountOfPalindrome(s3) == 4);
+}
+
 
 void test_interleaveStrings() {
     char s1[] = "test test2 test3";
