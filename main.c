@@ -417,6 +417,48 @@ WordBeforeFirstWordWithAReturnCode getWordBeforeFirstWordWithA(char *s, WordDesc
     return NOT_FOUND_A_WORD_WITH_A;
 }
 
+WordDescriptor lastWordInFirstStringInSecondString(char *s1, char *s2) {
+    BagOfWords bag1, bag2;
+    getBagOfWords(&bag1, s1);
+    getBagOfWords(&bag2, s2);
+
+    for (int i = bag1.size - 1; i >= 0; i--) {
+        WordDescriptor word = bag1.words[i];
+        for (int j = 0; j < bag2.size; j++) {
+            if (areWordsEqual(word, bag2.words[j])) {
+                return word;
+            }
+        }
+    }
+
+    WordDescriptor emptyWord = {"", ""};
+    return emptyWord;
+}
+
+void wordDescriptorToString(WordDescriptor word, char *destination) {
+    char *ptr = destination;
+    char *wordPtr = word.begin;
+    while (wordPtr != word.end) {
+        *ptr++ = *wordPtr++;
+    }
+    *ptr = '\0';
+}
+
+bool hasDuplicateWords(char *s) {
+    BagOfWords bag;
+    getBagOfWords(&bag, s);
+
+    for (int i = 0; i < bag.size - 1; i++) {
+        for (int j = i + 1; j < bag.size; j++) {
+            if (areWordsEqual(bag.words[i], bag.words[j])) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 void test_removeNonLetters() {
     char s[] = "Hi 12  3  ";
     removeNonLetters(s);
@@ -485,6 +527,34 @@ void test_getWordBeforeFirstWordWithA() {
 
 }
 
+void test_lastWordInFirstStringInSecondString() {
+    char s1[] = "apple banana cherry";
+    char s2[] = "banana cherry";
+    char s3[] = "banana";
+    char s4[] = "pineapple orange";
+
+    char result[MAX_WORD_SIZE];
+    WordDescriptor word;
+
+    word = lastWordInFirstStringInSecondString(s1, s2);
+    wordDescriptorToString(word, result);
+    ASSERT_STRING("cherry", result);
+
+    word = lastWordInFirstStringInSecondString(s1, s3);
+    wordDescriptorToString(word, result);
+    ASSERT_STRING("banana", result);
+
+    word = lastWordInFirstStringInSecondString(s1, s4);
+    wordDescriptorToString(word, result);
+    ASSERT_STRING("", result);
+}
+
+void test_hasDuplicateWords() {
+    char s1[] = "hello world hello";
+    char s2[] = "hello world";
+    assert(hasDuplicateWords(s1) == true && hasDuplicateWords(s2) == false);
+}
+
 int main() {
     test_removeNonLetters();
     test_removeExtraSpaces();
@@ -494,6 +564,8 @@ int main() {
     test_getCountOfPalindrome();
     test_interleaveStrings();
     test_getWordBeforeFirstWordWithA();
+    test_lastWordInFirstStringInSecondString();
+    test_hasDuplicateWords();
 
     return 0;
 }
