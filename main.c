@@ -14,6 +14,13 @@ typedef struct BagOfWords {
     size_t size;
 } BagOfWords;
 
+typedef enum WordBeforeFirstWordWithAReturnCode {
+    FIRST_WORD_WITH_A,
+    NOT_FOUND_A_WORD_WITH_A,
+    WORD_FOUND,
+    EMPTY_STRING
+} WordBeforeFirstWordWithAReturnCode;
+
 BagOfWords _bag;
 BagOfWords _bag2;
 
@@ -269,8 +276,8 @@ int isPalindrome(char *s, size_t length) {
     char *begin = s;
     char *end = s + length - 1;
 
-    while(begin < end) {
-        if(*begin != *end) {
+    while (begin < end) {
+        if (*begin != *end) {
             return 0;
         }
         begin++;
@@ -286,9 +293,9 @@ int getCountOfPalindrome(char *s) {
     char *ptr = s;
     char *wordStart = ptr;
 
-    while(*ptr != '\0') {
-        if(*ptr == ',' || *ptr == ' ') {
-            if(isPalindrome(wordStart, ptr - wordStart)) {
+    while (*ptr != '\0') {
+        if (*ptr == ',' || *ptr == ' ') {
+            if (isPalindrome(wordStart, ptr - wordStart)) {
                 count++;
             }
             wordStart = ptr + 1;
@@ -296,7 +303,7 @@ int getCountOfPalindrome(char *s) {
         ptr++;
     }
 
-    if(isPalindrome(wordStart, ptr - wordStart)) {
+    if (isPalindrome(wordStart, ptr - wordStart)) {
         count++;
     }
 
@@ -376,6 +383,39 @@ void reverseWords(char *s) {
     }
 }
 
+WordBeforeFirstWordWithAReturnCode getWordBeforeFirstWordWithA(char *s, WordDescriptor *w) {
+    WordDescriptor word;
+    char *ptr = s;
+    char *prevWordEnd = NULL;
+    int foundAWord = 0;
+
+    while (getWord(&ptr, &word)) {
+        if (find(word.begin, word.end, 'a') != word.end) {
+            if (!foundAWord) {
+                *w = word;
+                return FIRST_WORD_WITH_A;
+            }
+            else {
+                if (prevWordEnd != NULL) {
+                    w->begin = s;
+                    w->end = prevWordEnd;
+                    return WORD_FOUND;
+                } else {
+                    return EMPTY_STRING;
+                }
+            }
+        }
+
+        prevWordEnd = word.end;
+        foundAWord = 1;
+    }
+
+    if (ptr == s) {
+        return EMPTY_STRING;
+    }
+
+    return NOT_FOUND_A_WORD_WITH_A;
+}
 
 void test_removeNonLetters() {
     char s[] = "Hi 12  3  ";
@@ -433,6 +473,18 @@ void test_interleaveStrings() {
     ASSERT_STRING("test one test2 two test3 three four five ", result);
 }
 
+void test_getWordBeforeFirstWordWithA() {
+    WordDescriptor word;
+    char s1[] = "apple banana cherry";
+    char s2[] = "test cherry";
+    char s3[] = "";
+    char s4[] = "test apple";
+
+    assert(getWordBeforeFirstWordWithA(s1, &word) == FIRST_WORD_WITH_A && getWordBeforeFirstWordWithA(s2, &word) == NOT_FOUND_A_WORD_WITH_A &&
+           getWordBeforeFirstWordWithA(s3, &word) == EMPTY_STRING && getWordBeforeFirstWordWithA(s4, &word) == WORD_FOUND);
+
+}
+
 int main() {
     test_removeNonLetters();
     test_removeExtraSpaces();
@@ -441,6 +493,7 @@ int main() {
     test_areWordsLexicographicallyOrdered();
     test_getCountOfPalindrome();
     test_interleaveStrings();
+    test_getWordBeforeFirstWordWithA();
 
     return 0;
 }
