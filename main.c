@@ -515,6 +515,35 @@ char* getWordsExceptLast(char *s) {
     return result;
 }
 
+char* getWordBeforeFirstWordInBothStrings(char *s1, char *s2) {
+    BagOfWords bag1, bag2;
+    getBagOfWords(&bag1, s1);
+    getBagOfWords(&bag2, s2);
+
+    WordDescriptor word;
+    for (int i = 0; i < bag1.size; i++) {
+        word = bag1.words[i];
+
+        for (int j = 0; j < bag2.size; j++) {
+            if (areWordsEqual(word, bag2.words[j])) {
+                if (i > 0) {
+                    WordDescriptor prevWord = bag1.words[i - 1];
+                    size_t wordLength = prevWord.end - prevWord.begin;
+
+                    char *result = malloc(wordLength + 1);
+                    copy(prevWord.begin, prevWord.end, result);
+
+                    result[wordLength] = '\0';
+                    return result;
+                } else {
+                    return NULL;
+                }
+            }
+        }
+    }
+    return NULL;
+}
+
 void test_removeNonLetters() {
     char s[] = "Hi 12  3  ";
     removeNonLetters(s);
@@ -632,6 +661,13 @@ void test_getWordsExceptLast() {
 
 }
 
+void test_getWordBeforeFirstWordInBothStrings() {
+    char s1[] = "apple banana cherry";
+    char s2[] = "test banana";
+
+    ASSERT_STRING("apple", getWordBeforeFirstWordInBothStrings(s1, s2));
+}
+
 int main() {
     test_removeNonLetters();
     test_removeExtraSpaces();
@@ -645,6 +681,7 @@ int main() {
     test_hasDuplicateWords();
     test_hasPairOfWordsWithSameLetters();
     test_getWordsExceptLast();
+    test_getWordBeforeFirstWordInBothStrings();
 
     return 0;
 }
