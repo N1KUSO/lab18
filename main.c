@@ -544,6 +544,25 @@ char* getWordBeforeFirstWordInBothStrings(char *s1, char *s2) {
     return NULL;
 }
 
+void removePalindromes(char *s) {
+    BagOfWords bag;
+    getBagOfWords(&bag, s);
+
+    for (int i = 0; i < bag.size; i++) {
+        WordDescriptor word = bag.words[i];
+
+         if (isPalindrome(word.begin, word.end - word.begin)) {
+            char *ptr = word.begin;
+            while (ptr != word.end) {
+                *ptr = ' ';
+                ptr++;
+            }
+        }
+    }
+
+    removeExtraSpaces(s);
+}
+
 void test_removeNonLetters() {
     char s[] = "Hi 12  3  ";
     removeNonLetters(s);
@@ -668,6 +687,13 @@ void test_getWordBeforeFirstWordInBothStrings() {
     ASSERT_STRING("apple", getWordBeforeFirstWordInBothStrings(s1, s2));
 }
 
+void test_removePalindrome() {
+    char s[] = "level radar hello world";
+    removePalindromes(s);
+
+    ASSERT_STRING("hello world", s);
+}
+
 int main() {
     test_removeNonLetters();
     test_removeExtraSpaces();
@@ -682,6 +708,7 @@ int main() {
     test_hasPairOfWordsWithSameLetters();
     test_getWordsExceptLast();
     test_getWordBeforeFirstWordInBothStrings();
+    test_removePalindrome();
 
     return 0;
 }
